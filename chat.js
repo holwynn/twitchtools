@@ -26,7 +26,6 @@ const options = {
 
 const client = new tmi.client(options)
 client.connect()
-console.log('Connected!')
 
 let users = []
 
@@ -75,8 +74,8 @@ function formatMessage(user, message) {
 
     let positions = []
 
-    for (let key of Object.keys(user.emotes)) { 
-        for (let pos of user.emotes[key]) {
+    for (const key of Object.keys(user.emotes)) { 
+        for (const pos of user.emotes[key]) {
             positions.push(pos.split('-'))
         }
     }
@@ -88,7 +87,7 @@ function formatMessage(user, message) {
     let formattedMessage = ''
     let lastIndex = 0
 
-    for (let emoteIndex of positions) {
+    for (const emoteIndex of positions) {
         let emoteText = message.substring(Number(emoteIndex[0]), Number(emoteIndex[1]) + 1)
 
         formattedMessage += message.substring(lastIndex, emoteIndex[0])
@@ -99,8 +98,10 @@ function formatMessage(user, message) {
     return formattedMessage
 }
 
-function handleChat(channel, user, message) {
+client.addListener('message', (channel, user, message) => {
     console.log(`${formatBadges(user)}${formatUsername(user['display-name'])}: ${formatMessage(user, message)}`)
-}
+})
 
-client.addListener('message', handleChat)
+client.addListener('connected', () => {
+    console.log('Connected!')
+})

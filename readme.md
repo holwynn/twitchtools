@@ -8,4 +8,4 @@ Displays mods and subs, highlights emotes (only official twitch emotes)
 
 ## wordcount.js
 
-Shows the most used words
+Shows the most used words, userful for monitoring specific periods in a broadcast.

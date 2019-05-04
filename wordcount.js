@@ -1,11 +1,9 @@
 #!/usr/bin/env node
-const readline = require('readline')
 const tmi = require('tmi.js')
-const colors = require('colors/safe')
 const config = require('./config.json')
 
 if (!process.argv[2]) {
-    console.log('Usage: ./index.js [channel]')
+    console.log('Usage: ./wordcount.js [channel]')
     process.exit(-1)
 }
 
@@ -29,16 +27,13 @@ let words_db = {}
 let blacklist = ['Nightbot', 'Moobot']
 
 const client = new tmi.client(options)
-client.addListener('message', handleChat)
-client.connect()
-
-function handleChat(channel, user, message) {
+client.addListener('message', (channel, user, message) => {
     if (blacklist.includes(user.username)) {
         console.log(`Reject from ${user.username}`)
-        return;
+        return
     }
 
-    const words = message.split(' ');
+    const words = message.split(' ')
 
     for (const word of words) {
         const w = word.toLowerCase()
@@ -50,23 +45,11 @@ function handleChat(channel, user, message) {
         words_db[w] = 1
     }
 
-    let sorted = Object.keys(words_db).sort((a,b) => {
+    const sorted = Object.keys(words_db).sort((a,b) => {
         return words_db[a] - words_db[b]
     })
 
-    let part = sorted.slice(-10)
-
-    console.log(part)
-}
-
-const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
+    console.log(sorted.slice(-10))
 })
 
-rl.question('Type X at any point to end!\n', (arg) => {
-    if (arg === 'x') {
-        console.log('\nExiting...')
-        process.exit()
-    }
-})
+client.connect()
